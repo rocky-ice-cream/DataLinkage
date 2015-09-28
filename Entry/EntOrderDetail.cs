@@ -133,6 +133,8 @@ namespace DataLinkage
             strUpdateCommand.Append("      ,[quantity] = @quantity");
             strUpdateCommand.Append("      ,[point_rate] = @point_rate");
             strUpdateCommand.Append("      ,[tax_rate] = @tax_rate");
+            strUpdateCommand.Append("  WHERE [order_id] = @order_id");
+            strUpdateCommand.Append("  AND   [order_detail_id] = @order_detail_id");
 
             return strUpdateCommand.ToString();
         }

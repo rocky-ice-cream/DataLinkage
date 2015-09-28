@@ -368,6 +368,7 @@ namespace DataLinkage
             strUpdateCommand.Append("      ,[update_date] = @update_date");
             strUpdateCommand.Append("      ,[update_time] = @update_time");
             strUpdateCommand.Append("      ,[update_user] = @update_user");
+            strUpdateCommand.Append("  WHERE [customer_id] = @customer_id");            
 
             return strUpdateCommand.ToString();
         }

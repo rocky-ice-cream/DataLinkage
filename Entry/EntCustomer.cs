@@ -280,7 +280,7 @@ namespace DataLinkage
             strUpdateCommand.Append("      ,[update_user] = @update_user");
             strUpdateCommand.Append("      ,[del_flg] = @del_flg");
             strUpdateCommand.Append("      ,[common_no] = @common_no");//テスト的に共通番号列を作成
-
+            strUpdateCommand.Append("   WHERE [common_no] = @common_no");
             return strUpdateCommand.ToString();
         }
     }
