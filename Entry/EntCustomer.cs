@@ -1,7 +1,7 @@
 using System.Data;
 using System.Text;
 
-namespace DataLinkagejfdsa
+namespace DataLinkage
 {
     /// <summary>
     /// Customer—pƒNƒ‰ƒX

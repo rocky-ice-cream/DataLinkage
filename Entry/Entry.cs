@@ -14,6 +14,7 @@ namespace DataLinkage
     /// </remarks>
     public class Entry : IDisposable
     {
+
         // Dispose ‚µ‚½‚©‚Ç‚¤‚© 
         private bool _disposed = false;
 

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Reflection;
 
 namespace DataLinkage
 {
@@ -11,6 +13,21 @@ namespace DataLinkage
     /// </summary>
     public class BizWorker
     {
+        /// <summary>
+        /// ログ出力用クラス
+        /// </summary>
+        protected Logger myLogger = new Logger();
+
+        /// <summary>
+        /// クラス名
+        /// </summary>
+        private string ClassName;
+
+        /// <summary>
+        /// ファイル名
+        /// </summary>
+        private string AssemblyName;
+
         /// <summary>
         /// 検索結果がない場合
         /// </summary>
@@ -23,6 +40,8 @@ namespace DataLinkage
         /// </summary>
         public BizWorker()
         {
+            ClassName = this.GetType().FullName;
+            AssemblyName = Path.GetFileName(this.GetType().Assembly.Location);
         }
 
         /// <summary>
@@ -33,6 +52,8 @@ namespace DataLinkage
         {
             //実態を渡す
             myEntry = _myEntity;
+            ClassName = this.GetType().FullName;
+            AssemblyName = Path.GetFileName(this.GetType().Assembly.Location);
         }
 
 
@@ -43,6 +64,10 @@ namespace DataLinkage
         {
             //トランザクション
             SqlTransaction tran = null;
+
+            myLogger.LogWrite("ログの開始", MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName);
+
+            SqlContext.Pipe.Send("ログの開始");
 
             try
             {
@@ -105,20 +130,22 @@ namespace DataLinkage
                         EndTransaction(tran, true);
                     }
                 }
-                SqlContext.Pipe.Send("Mergeの正常終了");
+                myLogger.LogWrite("Mergeの正常終了", MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName);
             }
             catch (SqlException e)
             {
-                SqlContext.Pipe.Send(e.Message);
+                myLogger.LogWrite(e.Message, MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName, e.ErrorCode);
                 EndTransaction(tran, false);
                 throw e;
             }
             catch (Exception e) 
             {
-                SqlContext.Pipe.Send(e.Message);
+                myLogger.LogWrite(e.Message, MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName);
                 EndTransaction(tran, false);
                 throw e;
             }
+
+            myLogger.LogWrite("ログの終了", MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName);
         }
 
         /// <summary>
@@ -128,7 +155,7 @@ namespace DataLinkage
         /// <param name="_distTbl">参照先TBL</param>
         /// <remarks>
         /// </remarks>
-        private virtual void Upsert(DataTable _sourceTbl, DataTable _distTbl)
+        protected virtual void Upsert(DataTable _sourceTbl, DataTable _distTbl)
         {
             DataColumnCollection columns = _distTbl.Columns;
 

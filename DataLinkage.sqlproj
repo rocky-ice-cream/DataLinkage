@@ -82,5 +82,6 @@
     <Compile Include="Entry\EntDelivery.cs" />
     <Compile Include="import_OrderDetail.cs" />
     <Compile Include="Common\Common.cs" />
+    <Compile Include="Common\Logger.cs" />
   </ItemGroup>
 </Project>
