@@ -1,5 +1,6 @@
 ﻿using DataLinkage;
 using Microsoft.SqlServer.Server;
+using System.Reflection;
 
 public partial class StoredProcedures
 {
@@ -9,6 +10,8 @@ public partial class StoredProcedures
     [Microsoft.SqlServer.Server.SqlProcedure]
     public static void import_Customer ()
     {
+        string methodname = MethodBase.GetCurrentMethod().Name;
+
         // コードをここに記述してください
         Entry entry = new EntCustomer();
 
@@ -16,7 +19,7 @@ public partial class StoredProcedures
         entry.SetDbAccessInfo();
 
         // 処理用クラスの実行
-        new BizWorker(entry).Worker();
+        new BizWorker(entry,methodname).Worker();
     }
 
 }

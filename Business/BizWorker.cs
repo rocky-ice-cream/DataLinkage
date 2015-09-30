@@ -33,27 +33,21 @@ namespace DataLinkage
         /// </summary>
         private const DataRow NOT_MATCHED = null;
 
-        Entry myEntry = null;
-
         /// <summary>
-        /// コンストラクタ
+        /// DB接続用エントリークラス
         /// </summary>
-        public BizWorker()
-        {
-            ClassName = this.GetType().FullName;
-            AssemblyName = Path.GetFileName(this.GetType().Assembly.Location);
-        }
+        Entry MyEntry = null;
 
         /// <summary>
         /// 引数つきコンストラクタ
         /// </summary>
         /// <param name="_myEntity">各エントリークラス</param>
-        public BizWorker(Entry _myEntity)
+        public BizWorker(Entry _myEntity,string _assemblyname)
         {
             //実態を渡す
-            myEntry = _myEntity;
+            MyEntry = _myEntity;
             ClassName = this.GetType().FullName;
-            AssemblyName = Path.GetFileName(this.GetType().Assembly.Location);
+            AssemblyName = _assemblyname;
         }
 
 
@@ -64,10 +58,6 @@ namespace DataLinkage
         {
             //トランザクション
             SqlTransaction tran = null;
-
-            myLogger.LogWrite("ログの開始", MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName);
-
-            SqlContext.Pipe.Send("ログの開始");
 
             try
             {
@@ -82,7 +72,7 @@ namespace DataLinkage
 
                     //TEMPテーブルを取得
                     using (SqlCommand selectCommand
-                        = new SqlCommand(myEntry.GetSourceSelectCommandText(), conn))
+                        = new SqlCommand(MyEntry.GetSourceSelectCommandText(), conn))
                     {
                         // TEMPテーブルの取得
                         using (SqlDataReader reader = selectCommand.ExecuteReader())
@@ -94,31 +84,31 @@ namespace DataLinkage
 
                     // トランザクション処理の開始
                     // トランザクション処理フラグがたっていないときは内部でtran処理しない
-                    tran = BeginTransaction(conn, myEntry);
+                    tran = BeginTransaction(conn, MyEntry);
                     
                     //更新処理用テーブル
                     using (SqlDataAdapter dtadapbter = new SqlDataAdapter())
                     {
                         //Select用のパラメータを作成
-                        dtadapbter.SelectCommand = SetSqlCommand(Common.FUNC_TYPE.SELECT, conn, myEntry, tran);
-                        SetDbParameters(dtadapbter.SelectCommand, myEntry);
+                        dtadapbter.SelectCommand = SetSqlCommand(Common.FUNC_TYPE.SELECT, conn, MyEntry, tran);
+                        SetDbParameters(dtadapbter.SelectCommand, MyEntry);
 
                         //Insert用のパラメータを作成
-                        dtadapbter.InsertCommand = SetSqlCommand(Common.FUNC_TYPE.INSERT, conn, myEntry, tran);
-                        SetDbParameters(dtadapbter.InsertCommand, myEntry);
+                        dtadapbter.InsertCommand = SetSqlCommand(Common.FUNC_TYPE.INSERT, conn, MyEntry, tran);
+                        SetDbParameters(dtadapbter.InsertCommand, MyEntry);
                         
                         //Update用のパラメータを作成
-                        dtadapbter.UpdateCommand = SetSqlCommand(Common.FUNC_TYPE.UPDATE, conn, myEntry, tran);
-                        SetDbParameters(dtadapbter.UpdateCommand, myEntry);
+                        dtadapbter.UpdateCommand = SetSqlCommand(Common.FUNC_TYPE.UPDATE, conn, MyEntry, tran);
+                        SetDbParameters(dtadapbter.UpdateCommand, MyEntry);
 
                         DataSet dataset = new DataSet();
-                        dtadapbter.Fill(dataset, myEntry.DestTable);
+                        dtadapbter.Fill(dataset, MyEntry.DestTable);
 
                         DataTable distTable = new DataTable();
-                        distTable = dataset.Tables[myEntry.DestTable];
+                        distTable = dataset.Tables[MyEntry.DestTable];
 
                         // PrimaryKey（Merge文のon句にあたるもの）の設定
-                        distTable.PrimaryKey = GetPrimaryKey(myEntry,distTable);
+                        distTable.PrimaryKey = GetPrimaryKey(MyEntry,distTable);
 
                         //更新系の処理
                         Upsert(tempTable, distTable);
@@ -130,7 +120,6 @@ namespace DataLinkage
                         EndTransaction(tran, true);
                     }
                 }
-                myLogger.LogWrite("Mergeの正常終了", MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName);
             }
             catch (SqlException e)
             {
@@ -144,8 +133,6 @@ namespace DataLinkage
                 EndTransaction(tran, false);
                 throw e;
             }
-
-            myLogger.LogWrite("ログの終了", MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName);
         }
 
         /// <summary>

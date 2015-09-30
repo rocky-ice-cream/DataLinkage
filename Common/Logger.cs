@@ -53,7 +53,7 @@ namespace DataLinkage
                     logCommand.Parameters.AddWithValue("@error_code", _err);
                     logCommand.Parameters.AddWithValue("@method_name", _methodname.ToString());
                     logCommand.Parameters.AddWithValue("@class_name", _classname.ToString());
-                    logCommand.Parameters.AddWithValue("@Assembly_name", _assemblyname.ToString());
+                    logCommand.Parameters.AddWithValue("@program_name", _assemblyname.ToString());
                     logCommand.Parameters.AddWithValue("@log_create_time",DateTime.Now);
 
                     return logCommand.ExecuteNonQuery();
@@ -72,14 +72,14 @@ namespace DataLinkage
             strInsertCommand.Append("           ,[error_code]");
             strInsertCommand.Append("           ,[method_name]");
             strInsertCommand.Append("           ,[class_name]");
-            strInsertCommand.Append("           ,[Assembly_name]");
+            strInsertCommand.Append("           ,[program_name]");
             strInsertCommand.Append("           ,[log_create_time])");
             strInsertCommand.Append("     VALUES");
             strInsertCommand.Append("           (@log_text");
             strInsertCommand.Append("           ,@error_code");
             strInsertCommand.Append("           ,@method_name");
             strInsertCommand.Append("           ,@class_name");
-            strInsertCommand.Append("           ,@Assembly_name");
+            strInsertCommand.Append("           ,@program_name");
             strInsertCommand.Append("           ,@log_create_time)");
 
             return strInsertCommand.ToString();
