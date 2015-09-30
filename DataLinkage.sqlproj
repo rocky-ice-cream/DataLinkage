@@ -59,7 +59,7 @@
   <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
   <ItemGroup>
     <Folder Include="Properties" />
-    <Folder Include="Utility" />
+    <Folder Include="Common" />
     <Folder Include="Business" />
     <Folder Include="Entry" />
   </ItemGroup>
@@ -73,14 +73,14 @@
     <Compile Include="import_Order.cs" />
     <Compile Include="import_Subscription.cs" />
     <Compile Include="import_Delivery.cs" />
-    <Compile Include="Utility\Utility.cs" />
     <Compile Include="Business\BizWorker.cs" />
     <Compile Include="Entry\Entry.cs" />
     <Compile Include="Entry\EntCustomer.cs" />
-    <Compile Include="Utility\DBParameters.cs" />
+    <Compile Include="Common\DBParameters.cs" />
     <Compile Include="Entry\EntOrder.cs" />
     <Compile Include="Entry\EntOrderDetail.cs" />
     <Compile Include="Entry\EntDelivery.cs" />
     <Compile Include="import_OrderDetail.cs" />
+    <Compile Include="Common\Common.cs" />
   </ItemGroup>
 </Project>

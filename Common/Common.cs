@@ -4,7 +4,10 @@ using System.Text;
 
 namespace DataLinkage
 {
-    public static class Utility
+    /// <summary>
+    /// 共通クラス
+    /// </summary>
+    public static class Common
     {
         /// <summary>
         /// 接続文字列
