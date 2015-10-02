@@ -22,12 +22,12 @@ namespace DataLinkage
         public override void SetDbAccessInfo() {
 
             this.SourceTable = "[dbo].[tmp_dtb_customer]";
-            this.DestTable = "[dbo].[dtb_customer_test]";
+            this.DestTable = "[dbo].[dtb_customer]";
 
             // SQL用のパラメータの設定
-            this.SetDBParameters("common_no", DbType.Int32, true);
+            //this.SetDBParameters("common_no", DbType.Int32, true);
 
-            this.SetDBParameters("customer_id", DbType.Int32);
+            this.SetDBParameters("customer_id", DbType.Int32, true);
             this.SetDBParameters("influx_source", DbType.String);
             this.SetDBParameters("name01", DbType.String);
             this.SetDBParameters("name02", DbType.String);
@@ -70,39 +70,39 @@ namespace DataLinkage
         {
             StringBuilder strSelectCommand = new StringBuilder();
 
-            strSelectCommand.Append("SELECT [influx_source]");
-            strSelectCommand.Append("      ,[customer_id]");
-            strSelectCommand.Append("      ,[name01]");
-            strSelectCommand.Append("      ,[name02]");
-            strSelectCommand.Append("      ,[kana01]");
-            strSelectCommand.Append("      ,[kana02]");
-            strSelectCommand.Append("      ,[zipcode]");
-            strSelectCommand.Append("      ,[pref]");
-            strSelectCommand.Append("      ,[addr01]");
-            strSelectCommand.Append("      ,[addr02]");
-            strSelectCommand.Append("      ,[tel]");
-            strSelectCommand.Append("      ,[sex]");
-            strSelectCommand.Append("      ,[job]");
-            strSelectCommand.Append("      ,[birth]");
-            strSelectCommand.Append("      ,[email]");
-            strSelectCommand.Append("      ,[mailmaga_flg]");
-            strSelectCommand.Append("      ,[first_buy_date]");
-            strSelectCommand.Append("      ,[last_buy_date]");
-            strSelectCommand.Append("      ,[buy_times]");
-            strSelectCommand.Append("      ,[buy_total]");
-            strSelectCommand.Append("      ,[point]");
-            strSelectCommand.Append("      ,[use_point]");
-            strSelectCommand.Append("      ,[coupon]");
-            strSelectCommand.Append("      ,[note]");
-            strSelectCommand.Append("      ,[status]");
-            strSelectCommand.Append("      ,[create_date]");
-            strSelectCommand.Append("      ,[create_time]");
-            strSelectCommand.Append("      ,[create_user]");
-            strSelectCommand.Append("      ,[update_date]");
-            strSelectCommand.Append("      ,[update_time]");
-            strSelectCommand.Append("      ,[update_user]");
+            strSelectCommand.Append("SELECT 'T' as [influx_source]");
+            strSelectCommand.Append("      ,ISNULL([customer_id],'') as [customer_id]");
+            strSelectCommand.Append("      ,ISNULL([name01],'') as [name01]");
+            strSelectCommand.Append("      ,ISNULL([name02],'') as [name02]");
+            strSelectCommand.Append("      ,ISNULL([kana01],'') as [kana01]");
+            strSelectCommand.Append("      ,ISNULL([kana02],'') as [kana02]");
+            strSelectCommand.Append("      ,CONCAT (ISNULL([zip01],''),ISNULL([zip02],'')) as [zipcode]");
+            strSelectCommand.Append("      ,ISNULL([pref],0) as [pref]");
+            strSelectCommand.Append("      ,ISNULL([addr01],'') as [addr01]");
+            strSelectCommand.Append("      ,ISNULL([addr02],'') as [addr02]");
+            strSelectCommand.Append("      ,CONCAT([tel01],'-',[tel02],'-',[tel03]) as [tel]");
+            strSelectCommand.Append("      ,ISNULL([sex],0) as [sex]");
+            strSelectCommand.Append("      ,ISNULL([job],0) as [job]");
+            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[birth], 112),0) as [birth]");
+            strSelectCommand.Append("      ,ISNULL([email],'') as [email]");
+            strSelectCommand.Append("      ,ISNULL([mailmaga_flg],0) as [mailmaga_flg]");
+            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[first_buy_date], 112),0) as [first_buy_date]");
+            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[last_buy_date], 112),0) as [last_buy_date]");
+            strSelectCommand.Append("      ,ISNULL([buy_times],0) as [buy_times]");
+            strSelectCommand.Append("      ,ISNULL([buy_total],0) as [buy_total]");
+            strSelectCommand.Append("      ,ISNULL([point],0) as [point]");
+            strSelectCommand.Append("      ,0 as [use_point]");
+            strSelectCommand.Append("      ,0 as [coupon]");
+            strSelectCommand.Append("      ,ISNULL([note],'') as [note]");
+            strSelectCommand.Append("      ,ISNULL([status],1) as  [status]");
+            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[create_date], 112),0) as [create_date]");
+            strSelectCommand.Append("      ,ISNULL(REPLACE(CONVERT(nvarchar,[create_date], 8), ':', ''),0) as [create_time]");
+            strSelectCommand.Append("      ,999999 as [create_user]");
+            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[update_date], 112),0) as [update_date]");
+            strSelectCommand.Append("      ,ISNULL(REPLACE(CONVERT(nvarchar,[update_date], 8), ':', ''),0) as [update_time]");
+            strSelectCommand.Append("      ,999999 as [update_user]");
             strSelectCommand.Append("      ,[del_flg]");
-            strSelectCommand.Append("      ,[common_no] ");
+
             strSelectCommand.Append("FROM ");
             strSelectCommand.Append(SourceTable);
             strSelectCommand.Append(" WITH (NOLOCK) ");
@@ -149,7 +149,7 @@ namespace DataLinkage
             strSelectCommand.Append("      ,[update_time]");
             strSelectCommand.Append("      ,[update_user]");
             strSelectCommand.Append("      ,[del_flg]");
-            strSelectCommand.Append("      ,[common_no] ");
+            //strSelectCommand.Append("      ,[common_no] ");
             strSelectCommand.Append("FROM ");
             strSelectCommand.Append(DestTable);
 
@@ -199,8 +199,8 @@ namespace DataLinkage
             strInsertCommand.Append("           ,[update_date]");
             strInsertCommand.Append("           ,[update_time]");
             strInsertCommand.Append("           ,[update_user]");
-            strInsertCommand.Append("           ,[del_flg]");
-            strInsertCommand.Append("           ,[common_no])"); //テスト的に共通番号列を作成
+            strInsertCommand.Append("           ,[del_flg])");
+            //strInsertCommand.Append("           ,[common_no]"); //テスト的に共通番号列を作成
             strInsertCommand.Append("     VALUES");
             strInsertCommand.Append("           (@influx_source");
             //strInsertCommand.Append("           ,@customer_id");
@@ -233,8 +233,8 @@ namespace DataLinkage
             strInsertCommand.Append("           ,@update_date");
             strInsertCommand.Append("           ,@update_time");
             strInsertCommand.Append("           ,@update_user");
-            strInsertCommand.Append("           ,@del_flg");
-            strInsertCommand.Append("           ,@common_no)");//テスト的に共通番号列を作成
+            strInsertCommand.Append("           ,@del_flg)");
+            //strInsertCommand.Append("           ,@common_no");//テスト的に共通番号列を作成
             return strInsertCommand.ToString();
         }
 
@@ -279,9 +279,23 @@ namespace DataLinkage
             strUpdateCommand.Append("      ,[update_time] = @update_time");
             strUpdateCommand.Append("      ,[update_user] = @update_user");
             strUpdateCommand.Append("      ,[del_flg] = @del_flg");
-            strUpdateCommand.Append("      ,[common_no] = @common_no");//テスト的に共通番号列を作成
-            strUpdateCommand.Append("   WHERE [common_no] = @common_no");
+            //strUpdateCommand.Append("      ,[common_no] = @common_no");//テスト的に共通番号列を作成
+            strUpdateCommand.Append("   WHERE [customer_id] = @customer_id");
             return strUpdateCommand.ToString();
         }
+
+        /// <summary>
+        /// Truncate文を返す
+        /// </summary>
+        /// <returns>参照元データ消去SQL</returns>
+        public override string GetTruncateCommandText()
+        {
+            StringBuilder strTruncateCommand = new StringBuilder();
+
+            strTruncateCommand.Append("TRUNCATE TABLE ");
+            strTruncateCommand.Append(SourceTable);
+            return strTruncateCommand.ToString();
+        }
+
     }
 }

@@ -143,7 +143,14 @@ namespace DataLinkage
         {
             return string.Empty;
         }
-        
+
+        /// <summary>
+        /// Truncate文を返す
+        /// </summary>
+        /// <returns>参照元データ消去SQL</returns>
+        public virtual string GetTruncateCommandText() {
+            return string.Empty;
+        }
     }
 
 }

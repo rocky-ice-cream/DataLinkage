@@ -1,3 +1,4 @@
+using Microsoft.SqlServer.Server;
 using System.Data;
 using System.Text;
 
@@ -21,11 +22,11 @@ namespace DataLinkage
         /// </summary>
         public override void SetDbAccessInfo() {
 
-            this.SourceTable = "[dbo].[tmp_mtb_deliv]";
+            this.SourceTable = "[dbo].[tmp_dtb_deliv]";
             this.DestTable = "[dbo].[mtb_deliv]";
 
             // SQL用のパラメータの設定
-            this.SetDBParameters("deliv_id", DbType.Int16);
+            this.SetDBParameters("deliv_id", DbType.Int16,true);
             this.SetDBParameters("product_type_id", DbType.Int32);
             this.SetDBParameters("name", DbType.String);
             this.SetDBParameters("service_name", DbType.String);
@@ -51,20 +52,21 @@ namespace DataLinkage
             StringBuilder strSelectCommand = new StringBuilder();
 
             strSelectCommand.Append("SELECT [deliv_id]");
-            strSelectCommand.Append("      ,[product_type_id]");
-            strSelectCommand.Append("      ,[name]");
-            strSelectCommand.Append("      ,[service_name]");
-            strSelectCommand.Append("      ,[remark]");
-            strSelectCommand.Append("      ,[confirm_url]");
-            strSelectCommand.Append("      ,[rank]");
-            strSelectCommand.Append("      ,[status]");
-            strSelectCommand.Append("      ,[del_flg]");
-            strSelectCommand.Append("      ,[create_date]");
-            strSelectCommand.Append("      ,[create_time]");
-            strSelectCommand.Append("      ,[create_user]");
-            strSelectCommand.Append("      ,[update_date]");
-            strSelectCommand.Append("      ,[update_time]");
-            strSelectCommand.Append("      ,[update_user]");
+            strSelectCommand.Append("  ,ISNULL([product_type_id],0) AS [product_type_id]");
+            strSelectCommand.Append("  ,ISNULL([name],'') AS [name]");
+            strSelectCommand.Append("  ,ISNULL([service_name],'') AS [service_name]");
+            strSelectCommand.Append("  ,ISNULL([remark],'') AS [remark]");
+            strSelectCommand.Append("  ,ISNULL([confirm_url],'') AS [confirm_url]");
+            strSelectCommand.Append("  ,ISNULL([rank],0) AS [rank]");
+            strSelectCommand.Append("  ,ISNULL([status],1) AS [status]");
+            strSelectCommand.Append("  ,ISNULL([del_flg],0) AS [del_flg]");
+            strSelectCommand.Append("  ,ISNULL(CONVERT(nvarchar,[create_date], 112),0) AS [create_date]");
+            strSelectCommand.Append("  ,ISNULL(REPLACE(CONVERT(nvarchar,[create_date], 8), ':', ''),0) AS [create_time]");
+            strSelectCommand.Append("  ,99999 AS [create_user]");
+            strSelectCommand.Append("  ,ISNULL(CONVERT(nvarchar,[update_date], 112),0) AS [update_date]");
+            strSelectCommand.Append("  ,ISNULL(REPLACE(CONVERT(nvarchar,[update_date], 8), ':', ''),0) AS [update_time]");
+            strSelectCommand.Append("  ,99999 AS [update_user]");
+            
             strSelectCommand.Append("FROM ");
             strSelectCommand.Append(SourceTable);
             strSelectCommand.Append(" WITH (NOLOCK) ");

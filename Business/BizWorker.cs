@@ -119,6 +119,16 @@ namespace DataLinkage
                         //処理の終了
                         EndTransaction(tran, true);
                     }
+
+                    //int returncode = 0;
+
+                    //myLogger.LogWrite("tmpテーブルの削除開始", MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName, 0);
+
+                    //SqlContext.Pipe.ExecuteAndSend(new SqlCommand(MyEntry.GetTruncateCommandText()));
+
+                    //myLogger.LogWrite("tmpテーブルの削除終了", MethodBase.GetCurrentMethod().Name, ClassName, AssemblyName, returncode);
+
+
                 }
             }
             catch (SqlException e)
@@ -355,6 +365,21 @@ namespace DataLinkage
             {
                 _tran.Rollback();
             }
+        }
+
+        /// <summary>
+        /// 一時テーブルのデータ破棄を行う
+        /// </summary>
+        protected virtual int TruncateTmpTable(Entry _entry,SqlCommand _command) {
+            int returncode = 0; 
+            // 実テーブルをtruncateしないように、参照元テーブル名に
+            // tmpの文字列が含まれない場合のみ実行する
+            if(0 <= _entry.SourceTable.IndexOf("tmp", StringComparison.OrdinalIgnoreCase)){
+                _command.CommandText = _entry.GetTruncateCommandText();
+                returncode = _command.ExecuteNonQuery();
+            }
+
+            return returncode;
         }
     }
 }
