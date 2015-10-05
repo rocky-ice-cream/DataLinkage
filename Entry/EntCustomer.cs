@@ -25,30 +25,33 @@ namespace DataLinkage
             this.DestTable = "[dbo].[dtb_customer]";
 
             // SQL用のパラメータの設定
-            //this.SetDBParameters("common_no", DbType.Int32, true);
-
-            this.SetDBParameters("customer_id", DbType.Int32, true);
-            this.SetDBParameters("influx_source", DbType.String);
+            this.SetDBParameters("customer_id", DbType.Int32);
+            this.SetDBParameters("ec_customer_id", DbType.Int32, true);
+//            this.SetDBParameters("influx_source", DbType.String);
             this.SetDBParameters("name01", DbType.String);
             this.SetDBParameters("name02", DbType.String);
             this.SetDBParameters("kana01", DbType.String);
             this.SetDBParameters("kana02", DbType.String);
             this.SetDBParameters("zipcode", DbType.String);
+            this.SetDBParameters("pref", DbType.Int16);
             this.SetDBParameters("addr01", DbType.String);
             this.SetDBParameters("addr02", DbType.String);
             this.SetDBParameters("tel", DbType.String);
-            this.SetDBParameters("email", DbType.String);
-            this.SetDBParameters("note", DbType.String);
-            this.SetDBParameters("pref", DbType.Int16);
             this.SetDBParameters("sex", DbType.Int16);
             this.SetDBParameters("job", DbType.Int16);
-            this.SetDBParameters("birth", DbType.Int32);
+            this.SetDBParameters("birth_year", DbType.Int16);
+            this.SetDBParameters("birth_month", DbType.Int16);
+            this.SetDBParameters("birth_day", DbType.Int16);
+            this.SetDBParameters("email", DbType.String);
             this.SetDBParameters("mailmaga_flg", DbType.Int16);
             this.SetDBParameters("first_buy_date", DbType.Int32);
             this.SetDBParameters("last_buy_date", DbType.Int32);
+            this.SetDBParameters("buy_times", DbType.Int32);
+            this.SetDBParameters("buy_total", DbType.Int16);
             this.SetDBParameters("point", DbType.Int32);
             this.SetDBParameters("use_point", DbType.Int32);
             this.SetDBParameters("coupon", DbType.Int32);
+            this.SetDBParameters("note", DbType.String);
             this.SetDBParameters("status", DbType.Int16);
             this.SetDBParameters("create_date", DbType.Int32);
             this.SetDBParameters("create_time", DbType.Int32);
@@ -56,12 +59,8 @@ namespace DataLinkage
             this.SetDBParameters("update_date", DbType.Int32);
             this.SetDBParameters("update_time", DbType.Int32);
             this.SetDBParameters("update_user", DbType.Int32);
-            this.SetDBParameters("buy_times", DbType.Int32);
-            this.SetDBParameters("del_flg", DbType.Int16);
-            this.SetDBParameters("buy_total", DbType.Int16);
+            this.SetDBParameters("del_flg", DbType.Int16);       
         }
-
-
         /// <summary>
         /// 参照元Select文を返す
         /// </summary>
@@ -70,8 +69,8 @@ namespace DataLinkage
         {
             StringBuilder strSelectCommand = new StringBuilder();
 
-            strSelectCommand.Append("SELECT 'T' as [influx_source]");
-            strSelectCommand.Append("      ,ISNULL([customer_id],'') as [customer_id]");
+            strSelectCommand.Append("SELECT ");
+            strSelectCommand.Append("       ISNULL([customer_id],'') as [ec_customer_id]");
             strSelectCommand.Append("      ,ISNULL([name01],'') as [name01]");
             strSelectCommand.Append("      ,ISNULL([name02],'') as [name02]");
             strSelectCommand.Append("      ,ISNULL([kana01],'') as [kana01]");
@@ -83,11 +82,13 @@ namespace DataLinkage
             strSelectCommand.Append("      ,CONCAT([tel01],'-',[tel02],'-',[tel03]) as [tel]");
             strSelectCommand.Append("      ,ISNULL([sex],0) as [sex]");
             strSelectCommand.Append("      ,ISNULL([job],0) as [job]");
-            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[birth], 112),0) as [birth]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([birth], 'yyyy'),0) as [birth_year]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([birth], 'MM'),0) as [birth_month]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([birth], 'dd'),0) as [birth_day]");
             strSelectCommand.Append("      ,ISNULL([email],'') as [email]");
             strSelectCommand.Append("      ,ISNULL([mailmaga_flg],0) as [mailmaga_flg]");
-            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[first_buy_date], 112),0) as [first_buy_date]");
-            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[last_buy_date], 112),0) as [last_buy_date]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([first_buy_date], 'yyyyMMdd'),0) as [first_buy_date]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([last_buy_date], 'yyyyMMdd'),0) as [last_buy_date]");
             strSelectCommand.Append("      ,ISNULL([buy_times],0) as [buy_times]");
             strSelectCommand.Append("      ,ISNULL([buy_total],0) as [buy_total]");
             strSelectCommand.Append("      ,ISNULL([point],0) as [point]");
@@ -95,11 +96,11 @@ namespace DataLinkage
             strSelectCommand.Append("      ,0 as [coupon]");
             strSelectCommand.Append("      ,ISNULL([note],'') as [note]");
             strSelectCommand.Append("      ,ISNULL([status],1) as  [status]");
-            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[create_date], 112),0) as [create_date]");
-            strSelectCommand.Append("      ,ISNULL(REPLACE(CONVERT(nvarchar,[create_date], 8), ':', ''),0) as [create_time]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([create_date], 'yyyyMMdd'),0) as [create_date]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([create_date], 'hhmmss'),0) as [create_time]");
             strSelectCommand.Append("      ,999999 as [create_user]");
-            strSelectCommand.Append("      ,ISNULL(CONVERT(nvarchar,[update_date], 112),0) as [update_date]");
-            strSelectCommand.Append("      ,ISNULL(REPLACE(CONVERT(nvarchar,[update_date], 8), ':', ''),0) as [update_time]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([update_date], 'yyyyMMdd'),0) as [update_date]");
+            strSelectCommand.Append("      ,ISNULL(FORMAT([update_date], 'hhmmss'),0) as [update_time]");
             strSelectCommand.Append("      ,999999 as [update_user]");
             strSelectCommand.Append("      ,[del_flg]");
 
@@ -117,8 +118,9 @@ namespace DataLinkage
         public override string GetDestSelectCommandText()
         {
             StringBuilder strSelectCommand = new StringBuilder();
-            strSelectCommand.Append("SELECT [influx_source]");
-            strSelectCommand.Append("      ,[customer_id]");
+            strSelectCommand.Append("SELECT ");
+            strSelectCommand.Append("       [customer_id] ");
+            strSelectCommand.Append("      ,[ec_customer_id] ");
             strSelectCommand.Append("      ,[name01]");
             strSelectCommand.Append("      ,[name02]");
             strSelectCommand.Append("      ,[kana01]");
@@ -130,7 +132,9 @@ namespace DataLinkage
             strSelectCommand.Append("      ,[tel]");
             strSelectCommand.Append("      ,[sex]");
             strSelectCommand.Append("      ,[job]");
-            strSelectCommand.Append("      ,[birth]");
+            strSelectCommand.Append("      ,[birth_year]");
+            strSelectCommand.Append("      ,[birth_month]");
+            strSelectCommand.Append("      ,[birth_day]");
             strSelectCommand.Append("      ,[email]");
             strSelectCommand.Append("      ,[mailmaga_flg]");
             strSelectCommand.Append("      ,[first_buy_date]");
@@ -168,8 +172,9 @@ namespace DataLinkage
 
             strInsertCommand.Append("INSERT INTO ");
             strInsertCommand.Append(DestTable);
-            strInsertCommand.Append("           ([influx_source]");
+            //strInsertCommand.Append("           ([influx_source]");
             //strInsertCommand.Append("           ,[customer_id]");
+            strInsertCommand.Append("           ([ec_customer_id] ");
             strInsertCommand.Append("           ,[name01]");
             strInsertCommand.Append("           ,[name02]");
             strInsertCommand.Append("           ,[kana01]");
@@ -181,7 +186,9 @@ namespace DataLinkage
             strInsertCommand.Append("           ,[tel]");
             strInsertCommand.Append("           ,[sex]");
             strInsertCommand.Append("           ,[job]");
-            strInsertCommand.Append("           ,[birth]");
+            strInsertCommand.Append("           ,[birth_year]");
+            strInsertCommand.Append("           ,[birth_month]");
+            strInsertCommand.Append("           ,[birth_day]");
             strInsertCommand.Append("           ,[email]");
             strInsertCommand.Append("           ,[mailmaga_flg]");
             strInsertCommand.Append("           ,[first_buy_date]");
@@ -202,8 +209,9 @@ namespace DataLinkage
             strInsertCommand.Append("           ,[del_flg])");
             //strInsertCommand.Append("           ,[common_no]"); //テスト的に共通番号列を作成
             strInsertCommand.Append("     VALUES");
-            strInsertCommand.Append("           (@influx_source");
+            //strInsertCommand.Append("           (@influx_source");
             //strInsertCommand.Append("           ,@customer_id");
+            strInsertCommand.Append("           (@ec_customer_id");
             strInsertCommand.Append("           ,@name01");
             strInsertCommand.Append("           ,@name02");
             strInsertCommand.Append("           ,@kana01");
@@ -215,7 +223,9 @@ namespace DataLinkage
             strInsertCommand.Append("           ,@tel");
             strInsertCommand.Append("           ,@sex");
             strInsertCommand.Append("           ,@job");
-            strInsertCommand.Append("           ,@birth");
+            strInsertCommand.Append("           ,@birth_year");
+            strInsertCommand.Append("           ,@birth_month");
+            strInsertCommand.Append("           ,@birth_day");
             strInsertCommand.Append("           ,@email");
             strInsertCommand.Append("           ,@mailmaga_flg");
             strInsertCommand.Append("           ,@first_buy_date");
@@ -248,7 +258,7 @@ namespace DataLinkage
 
             strUpdateCommand.Append("UPDATE ");
             strUpdateCommand.Append(DestTable);
-            strUpdateCommand.Append("   SET [influx_source] = @influx_source");
+            strUpdateCommand.Append("   SET [ec_customer_id] = @ec_customer_id");
             strUpdateCommand.Append("      ,[name01] = @name01");
             strUpdateCommand.Append("      ,[name02] = @name02");
             strUpdateCommand.Append("      ,[kana01] = @kana01");
@@ -260,7 +270,9 @@ namespace DataLinkage
             strUpdateCommand.Append("      ,[tel] = @tel");
             strUpdateCommand.Append("      ,[sex] = @sex");
             strUpdateCommand.Append("      ,[job] = @job");
-            strUpdateCommand.Append("      ,[birth] = @birth");
+            strUpdateCommand.Append("      ,[birth_year] = @birth_year");
+            strUpdateCommand.Append("      ,[birth_month] = @birth_month");
+            strUpdateCommand.Append("      ,[birth_day] = @birth_day");
             strUpdateCommand.Append("      ,[email] = @email");
             strUpdateCommand.Append("      ,[mailmaga_flg] = @mailmaga_flg");
             strUpdateCommand.Append("      ,[first_buy_date] = @first_buy_date");
@@ -280,7 +292,7 @@ namespace DataLinkage
             strUpdateCommand.Append("      ,[update_user] = @update_user");
             strUpdateCommand.Append("      ,[del_flg] = @del_flg");
             //strUpdateCommand.Append("      ,[common_no] = @common_no");//テスト的に共通番号列を作成
-            strUpdateCommand.Append("   WHERE [customer_id] = @customer_id");
+            strUpdateCommand.Append("   WHERE [ec_customer_id] = @ec_customer_id");
             return strUpdateCommand.ToString();
         }
 

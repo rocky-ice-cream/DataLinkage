@@ -44,15 +44,20 @@ namespace DataLinkage
         {
             StringBuilder strSelectCommand = new StringBuilder();
 
-            strSelectCommand.Append("SELECT [influx_source]");
-            strSelectCommand.Append("      ,[order_id]");
-            strSelectCommand.Append("      ,[order_detail_id]");
-            strSelectCommand.Append("      ,[product_id]");
-            strSelectCommand.Append("      ,[product_name]");
-            strSelectCommand.Append("      ,[price]");
-            strSelectCommand.Append("      ,[quantity]");
-            strSelectCommand.Append("      ,[point_rate]");
-            strSelectCommand.Append("      ,[tax_rate]");
+            strSelectCommand.Append("  SELECT 'E' AS [influx_source]");
+            strSelectCommand.Append("        ,[order_id] AS [order_id]");
+            strSelectCommand.Append("        ,[order_detail_id] AS [order_detail_id]");
+            strSelectCommand.Append("        ,[product_id] AS [product_id]");
+            strSelectCommand.Append("        ,[product_name] AS [product_name]");
+            strSelectCommand.Append("        ,[price] AS [price]");
+            strSelectCommand.Append("        ,[quantity] AS [quantity]");
+            strSelectCommand.Append("        ,[point_rate] AS [point_rate]");
+            strSelectCommand.Append("        ,[tax_rate] AS [tax_rate]");
+            strSelectCommand.Append("        ,[product_class_id] AS [product_class_id]");
+            strSelectCommand.Append("        ,[product_code] AS [product_code]");
+            strSelectCommand.Append("        ,[classcategory_name1] AS [classcategory_name1]");
+            strSelectCommand.Append("        ,[classcategory_name2] AS [classcategory_name2]");
+            strSelectCommand.Append("        ,[tax_rule] AS [tax_rule]");
             strSelectCommand.Append("FROM ");
             strSelectCommand.Append(SourceTable);
             strSelectCommand.Append(" WITH (NOLOCK) ");

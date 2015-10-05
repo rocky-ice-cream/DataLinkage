@@ -67,7 +67,7 @@ namespace DataLinkage
         /// <returns></returns>
         private string GetInsertCommand() {
             StringBuilder strInsertCommand = new StringBuilder();
-            strInsertCommand.Append("INSERT INTO [dbo].[ctb_log]");
+            strInsertCommand.Append("INSERT INTO [dbo].[ctb_datalinkage_log]");
             strInsertCommand.Append("           ([log_text]");
             strInsertCommand.Append("           ,[error_code]");
             strInsertCommand.Append("           ,[method_name]");
