@@ -25,7 +25,6 @@ namespace DataLinkage
             this.DestTable = "[dbo].[dtb_order_detail]";
 
             // SQL用のパラメータの設定
-            this.SetDBParameters("influx_source", DbType.String, true);
             this.SetDBParameters("order_id", DbType.Int32, true);
             this.SetDBParameters("order_detail_id", DbType.Int32, true);
             this.SetDBParameters("product_id", DbType.Int32);
@@ -44,8 +43,7 @@ namespace DataLinkage
         {
             StringBuilder strSelectCommand = new StringBuilder();
 
-            strSelectCommand.Append("  SELECT 'E' AS [influx_source]");
-            strSelectCommand.Append("        ,[order_id] AS [order_id]");
+            strSelectCommand.Append("  SELECT [order_id] AS [order_id]");
             strSelectCommand.Append("        ,[order_detail_id] AS [order_detail_id]");
             strSelectCommand.Append("        ,[product_id] AS [product_id]");
             strSelectCommand.Append("        ,[product_name] AS [product_name]");
@@ -72,8 +70,7 @@ namespace DataLinkage
         public override string GetDestSelectCommandText()
         {
             StringBuilder strSelectCommand = new StringBuilder();
-            strSelectCommand.Append("SELECT [influx_source]");
-            strSelectCommand.Append("      ,[order_id]");
+            strSelectCommand.Append("SELECT [order_id]");
             strSelectCommand.Append("      ,[order_detail_id]");
             strSelectCommand.Append("      ,[product_id]");
             strSelectCommand.Append("      ,[product_name]");
@@ -97,8 +94,7 @@ namespace DataLinkage
 
             strInsertCommand.Append("INSERT INTO ");
             strInsertCommand.Append(DestTable);
-            strInsertCommand.Append("           ([influx_source]");
-            strInsertCommand.Append("           ,[order_id]");
+            strInsertCommand.Append("           ([order_id]");
             strInsertCommand.Append("           ,[order_detail_id]");
             strInsertCommand.Append("           ,[product_id]");
             strInsertCommand.Append("           ,[product_name]");
@@ -107,8 +103,7 @@ namespace DataLinkage
             strInsertCommand.Append("           ,[point_rate]");
             strInsertCommand.Append("           ,[tax_rate])");
             strInsertCommand.Append("     VALUES");
-            strInsertCommand.Append("           (@influx_source");
-            strInsertCommand.Append("           ,@order_id");
+            strInsertCommand.Append("           (@order_id");
             strInsertCommand.Append("           ,@order_detail_id");
             strInsertCommand.Append("           ,@product_id");
             strInsertCommand.Append("           ,@product_name");
@@ -129,8 +124,7 @@ namespace DataLinkage
 
             strUpdateCommand.Append("UPDATE ");
             strUpdateCommand.Append(DestTable);
-            strUpdateCommand.Append("   SET [influx_source] = @influx_source");
-            strUpdateCommand.Append("      ,[order_id] = @order_id");
+            strUpdateCommand.Append("   SET [order_id] = @order_id");
             strUpdateCommand.Append("      ,[order_detail_id] = @order_detail_id");
             strUpdateCommand.Append("      ,[product_id] = @product_id");
             strUpdateCommand.Append("      ,[product_name] = @product_name");
